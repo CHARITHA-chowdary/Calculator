@@ -1,0 +1,37 @@
+name: Build and Deploy FastAPI App
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: calculator
+
+jobs:
+  build-and-deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Azure Container Registry
+      run: |
+        echo ${{ secrets.AZURE_REGISTRY_PASSWORD }} | docker login ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }} -u ${{ secrets.AZURE_REGISTRY_USERNAME }} --password-stdin
+
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:${{ github.sha }} .
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:${{ github.sha }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        images: ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:${{ github.sha }}
