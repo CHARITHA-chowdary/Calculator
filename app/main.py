@@ -15,7 +15,7 @@ def home():
     return {"message": "FastAPI Calculator Running"}
 
 
-@app.post("/calculatechange")
+@app.post("/calculatedata")
 def calculate(request: CalculationRequest):
     a = request.a
     b = request.b
