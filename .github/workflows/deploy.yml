@@ -24,11 +24,11 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:${{ github.sha }} .
+        docker build -t ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:latest .
 
     - name: Push Docker image
       run: |
-        docker push ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:${{ github.sha }}
+        docker push ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:latest
 
     - name: Azure Login
       uses: azure/login@v1
@@ -39,4 +39,4 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-        images: ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:${{ github.sha }}
+        images: ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/calculator:latest
